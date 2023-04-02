@@ -1,0 +1,70 @@
+import os
+import csv
+
+# Set file paths
+data_dir = "C:/Users/FloMartin-ResolveMin/Desktop/Bootcamp/MODULE 3/Starter_Code (1)/Starter_Code/PyBank/Resources"
+budget_data_csv = os.path.join(data_dir, "budget_data.csv")
+output_txt = os.path.join(data_dir, "output.txt")
+
+#Initialize variables
+
+total_months = 0
+total_revenue = 0
+revenue = []
+previous_revenue = 0
+month_of_change = []
+revenue_change = 0
+greatest_decrease = ["", 9999999]
+greatest_increase = ["", 0]
+revenue_change_list = []
+
+# Read in the data and calculate results
+with open(budget_data_csv, 'r') as csvfile:
+    reader = csv.reader(csvfile)
+    header = next(reader)
+
+
+    # Loop through to find total months and total revenue
+    for row in reader:
+
+        # Count the total of months
+        total_months += 1
+
+        # Calculate the total revenue over the entire period
+        total_revenue += int(row[1])
+
+        # Calculate the revenue change for each month and add it to the list
+        revenue_change = int(row[1]) - previous_revenue
+        revenue_change_list.append(revenue_change)
+        previous_revenue = int(row[1])
+
+        # The greatest increase in revenue (date and amount) over the entire period
+        if revenue_change > greatest_increase[1]:
+            greatest_increase[1] = revenue_change
+            greatest_increase[0] = row[0]
+
+        # The greatest decrease in revenue (date and amount) over the entire period
+        if revenue_change < greatest_decrease[1]:
+            greatest_decrease[1] = revenue_change
+            greatest_decrease[0] = row[0]
+
+    # Calculate the average change in revenue between months over the entire period
+    revenue_average = sum(revenue_change_list) / len(revenue_change_list)
+
+# Print and write results to output file
+with open(output_txt, 'w') as output_file:
+    output_file.write(f"Financial Analysis\n")
+    output_file.write(f"------------------\n")
+    output_file.write(f"Total Months: {total_months}\n")
+    output_file.write(f"Total: ${total_revenue}\n")
+    output_file.write(f"Average Change: ${revenue_average:.2f}\n")
+    output_file.write(f"Greatest Increase in Profits: {greatest_increase[0]} (${greatest_increase[1]})\n")
+    output_file.write(f"Greatest Decrease in Profits: {greatest_decrease[0]} (${greatest_decrease[1]})\n")
+
+    print(f"Financial Analysis")
+    print(f"------------------")
+    print(f"Total Months: {total_months}")
+    print(f"Total: ${total_revenue}")
+    print(f"Average Change: ${revenue_average:.2f}")
+    print(f"Greatest Increase in Profits: {greatest_increase[0]} (${greatest_increase[1]})")
+    print(f"Greatest Decrease in Profits: {greatest_decrease[0]} (${greatest_decrease[1]})")

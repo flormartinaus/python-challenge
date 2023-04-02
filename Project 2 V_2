@@ -1,0 +1,45 @@
+import os 
+import csv
+import collections 
+
+# Set file paths
+data_dir = "C:/Users/FloMartin-ResolveMin/Desktop/Bootcamp/MODULE 3/Starter_Code (1)/Starter_Code/PyPoll/Resources"
+electiondata_csv = os.path.join(data_dir, "election_data.csv")
+output_txt = os.path.join(data_dir, "output.txt")
+
+# Initialize variables
+total_votes = 0
+candidate_results = collections.OrderedDict()
+
+# Read in the data and calculate results
+with open(electiondata_csv, 'r') as csvfile:
+    reader = csv.reader(csvfile)
+    header = next(reader)
+    for line in reader:
+        candidate = line[2]
+        total_votes += 1
+        if candidate in candidate_results:
+            candidate_results[candidate]['vote_count'] += 1
+        else:
+            candidate_results[candidate] = {'vote_count': 1}
+    winner = max(candidate_results, key=lambda x: candidate_results[x]['vote_count'])
+    for candidate in candidate_results.values():
+        candidate['percentage_vote'] = (candidate['vote_count'] / total_votes) * 100
+
+# Write results to output file and print
+with open(output_txt, 'w') as output_file:
+    print("Election Results")
+    print("--------------------------------------------")
+    output_file.write("Election Results\n")
+    output_file.write("--------------------------------------------\n")
+    print(f"Total Votes: {total_votes}")
+    output_file.write(f"Total Votes: {total_votes}\n")
+    print("--------------------------------------------")
+    output_file.write("--------------------------------------------\n")
+    for candidate in candidate_results:
+        print(f"{candidate}: {candidate_results[candidate]['percentage_vote']:.3f}% ({candidate_results[candidate]['vote_count']})")
+        output_file.write(f"{candidate}: {candidate_results[candidate]['percentage_vote']:.3f}% ({candidate_results[candidate]['vote_count']})\n")
+    print("--------------------------------------------")
+    output_file.write("--------------------------------------------\n")
+    print(f"Winner: {winner}")
+    output_file.write(f"Winner: {winner}\n")
